@@ -1,5 +1,6 @@
 import os
 import PyPDF2
+# from PyPDF2 import PdfReader
 from nltk import word_tokenize
 
 
@@ -11,6 +12,7 @@ def pdf_get_text_chunks(file_path, chunk_size, overlap):
     # open pdf file based on path
     with open(file_path, 'rb') as file:
         reader = PyPDF2.PdfReader(file)
+        # reader = PdfReader(file)
         num_pages = len(reader.pages)
 
         # extract all text of pdf
@@ -32,6 +34,31 @@ def pdf_get_text_chunks(file_path, chunk_size, overlap):
             i += chunk_size - overlap
 
     return chunks
+
+
+def pdf_get_sentences(file_path):
+    sentences = []
+    filename = os.path.basename(file_path)  # Get the filename from the file path
+
+    # Open the PDF file based on path
+    with open(file_path, 'rb') as file:
+        reader = PyPDF2.PdfReader(file)
+        num_pages = len(reader.pages)
+
+        # Extract all text from the PDF
+        text = ""
+        for page_num in range(num_pages):
+            page = reader.pages[page_num]
+            text += page.extract_text()
+
+        # Tokenize text into sentences
+        sentences_list = sent_tokenize(text)
+
+        for sentence in sentences_list:
+            sentences.append((filename, sentence))
+
+    return sentences
+
 
 
 # calls pdf_get_text_chunks for entire folder returning filename and chunks
